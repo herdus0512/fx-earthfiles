@@ -1,4 +1,5 @@
-FROM herdus0512/demo-images:mongodb-4.2.15
+ARG VERSION=$VERSION
+FROM herdus0512/demo-images:mongodb-$VERSION
 
 bash:
   RUN --interactive /bin/bash
