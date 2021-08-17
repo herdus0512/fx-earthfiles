@@ -2,10 +2,11 @@ ARG INFORMIX_VERSION=$INFORMIX_VERSION
 FROM herdus0512/demo-images:informix-$INFORMIX_VERSION
 
 bash:
-  RUN --interactive /bin/bash
+  ENTRYPOINT ["/bin/bash"]
+  SAVE IMAGE informix-bash:$INFORMIX_VERSION
 
 db:
-  RUN --interactive --entrypoint
+  SAVE IMAGE informix-db:$INFORMIX_VERSION
 
 tde:
   WORKDIR /home/informix
@@ -18,7 +19,24 @@ tde:
   COPY scripts /home/informix
   RUN --no-cache ./gen_conf.sh
   RUN --no-cache ./gen_cert.sh
-  RUN /opt/ibm/informix/bin/onkstore -create -file fx.store -cipher aes256 -credential ./kmip.json
-  RUN /opt/ibm/informix/bin/onkstore -verify -file fx.store
+
+  ENV BASEDIR=/opt/ibm
+  ENV SCRIPTS=$BASEDIR/scripts
+  ENV INFORMIX_HOME=/home/informix
+  ENV INFORMIXDIR=$BASEDIR/informix
+  ENV PATH=":${INFORMIXDIR}/bin:$INFORMIXDIR/jvm/jre/bin:.:${PATH}"
+  ENV INFORMIXSERVER=informix
+  ENV ONCONFIG=onconfig
+  ENV LD_LIBRARY_PATH="${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${LD_LIBRARY_PATH}"
+  ENV INFORMIX_DATA_DIR=$BASEDIR/data
+  ENV INFORMIX_CONFIG_DIR=$BASEDIR/config
+  ENV INFORMIX_FILES_DIR=$BASEDIR/files
+  ENV INFORMIXSQLHOSTS=$INFORMIXDIR/etc/sqlhosts
+  ENV INIT_LOG=$INFORMIX_DATA_DIR/init_status.log
+
+  RUN sudo /opt/ibm/informix/gskit/installgskit
+  RUN onkstore -create -file /home/informix/fx.store -cipher aes256 -credential /home/informix/kmip.json
+  RUN onkstore -verify -file /home/informix/fx.store
   RUN rm ./kmip.json.template
-  RUN --interactive --entrypoint
+  RUN echo "DISK_ENCRYPTION keystore=/home/informix/fx.store,cipher=aes256" >> /opt/ibm/informix/etc/onconfig.std
+  SAVE IMAGE informix-tde:$INFORMIX_VERSION
