@@ -2,10 +2,10 @@ ARG MONGO_VERSION=$MONGO_VERSION
 FROM herdus0512/demo-images:mongodb-$MONGO_VERSION
 
 bash:
-  CMD ["/bin/bash"]
+  RUN --interactive /bin/bash
 
 db:
-  CMD ["/usr/bin/mongod"]
+  RUN --interactive /usr/bin/mongod
 
 tde:
   WORKDIR /app
@@ -16,19 +16,4 @@ tde:
   ARG SDKMS_ACCT_ID=$SDKMS_ACCT_ID
   COPY scripts /app
   RUN --no-cache ./gen_cert.sh
-  CMD ["/usr/bin/mongod","--enableEncryption","--kmipServerName","$SDKMS_API_ENDPOINT","--kmipServerCAFile","/app/DSM_Chain_CA.pem","--kmipClientCertificateFile","/app/client.pem"]
-
-run-bash:
-  WITH DOCKER --load mongodb-$MONGO_VERSION-bash:latest=+bash
-    RUN docker run --rm -d --name mongodb-$MONGO_VERSION-bash mongodb-$MONGO_VERSION-bash:latest
-  END
-
-run-db:
-  WITH DOCKER --load mongodb-$MONGO_VERSION-db:latest=+db
-    RUN docker run --rm -d --name mongodb-$MONGO_VERSION-db mongodb-$MONGO_VERSION-db:latest
-  END
-
-run-tde:
-  WITH DOCKER --load mongodb-$MONGO_VERSION-tde:latest=+tde
-    RUN docker run --rm -d --name mongodb-$MONGO_VERSION-tde mongodb-$MONGO_VERSION-tde:latest
-  END
+  RUN --interactive /usr/bin/mongod --enableEncryption --kmipServerName $SDKMS_API_ENDPOINT --kmipServerCAFile /app/DSM_Chain_CA.pem --kmipClientCertificateFile /app/client.pem
