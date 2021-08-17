@@ -1,0 +1,22 @@
+ARG INFORMIX_VERSION=$INFORMIX_VERSION
+FROM herdus0512/demo-images:informix-$INFORMIX_VERSION
+
+bash:
+  RUN --interactive /bin/bash
+
+db:
+  RUN --interactive /usr/bin/mongod
+
+db-tde:
+  WORKDIR /home/informix
+  ARG SDKMS_APP_ID=$SDKMS_APP_ID
+  ARG SDKMS_API_ENDPOINT=$SDKMS_API_ENDPOINT
+  ARG SDKMS_API_USERNAME=$SDKMS_API_USERNAME
+  ARG SDKMS_API_PASSWORD=$SDKMS_API_PASSWORD
+  ARG SDKMS_ACCT_ID=$SDKMS_ACCT_ID
+  ARG SDKMS_KEY_ID=$SDKMS_KEY_ID            #BUG: Informix onkstore doesn't create a key automatically
+  COPY scripts /home/informix
+  RUN --no-cache ./gen_conf.sh
+  RUN --no-cache ./gen_cert.sh
+  RUN rm ./kmip.json.template
+  RUN --interactive --entrypoint

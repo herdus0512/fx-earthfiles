@@ -1,9 +1,9 @@
-ARG VERSION=$VERSION
-FROM herdus0512/demo-images:mongodb-$VERSION
+ARG MONGO_VERSION=$MONGO_VERSION
+FROM herdus0512/demo-images:mongodb-$MONGO_VERSION
 
 bash:
   RUN --interactive /bin/bash
-
+  
 db:
   RUN --interactive /usr/bin/mongod
 

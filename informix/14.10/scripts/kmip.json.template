@@ -1,0 +1,12 @@
+{
+    "Credentials" :
+    {
+        "Type" : "kmip",
+        "KMIP Server" : "<endpoint>",
+        "KMIP Username" : "",
+        "KMIP Password" : "",
+        "KMIP Client Certificate File" : "/home/informix/client.pem",
+        "KMIP CA Certificate File" : "/home/informix/DSM_Chain_CA.pem",
+        "KMIP Key Name" : "<keyid>"
+    }
+}
