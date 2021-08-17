@@ -5,9 +5,9 @@ bash:
   RUN --interactive /bin/bash
 
 db:
-  RUN --interactive /usr/bin/mongod
+  RUN --interactive --entrypoint
 
-db-tde:
+tde:
   WORKDIR /home/informix
   ARG SDKMS_APP_ID=$SDKMS_APP_ID
   ARG SDKMS_API_ENDPOINT=$SDKMS_API_ENDPOINT
@@ -18,5 +18,7 @@ db-tde:
   COPY scripts /home/informix
   RUN --no-cache ./gen_conf.sh
   RUN --no-cache ./gen_cert.sh
+  RUN /opt/ibm/informix/bin/onkstore -create -file fx.store -cipher aes256 -credential ./kmip.json
+  RUN /opt/ibm/informix/bin/onkstore -verify -file fx.store
   RUN rm ./kmip.json.template
   RUN --interactive --entrypoint
