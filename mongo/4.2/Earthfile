@@ -2,12 +2,12 @@ ARG MONGO_VERSION=$MONGO_VERSION
 FROM herdus0512/demo-images:mongodb-$MONGO_VERSION
 
 bash:
-  RUN --interactive /bin/bash
-  
-db:
-  RUN --interactive /usr/bin/mongod
+  CMD ["/bin/bash"]
 
-db-tde:
+db:
+  CMD ["/usr/bin/mongod"]
+
+tde:
   WORKDIR /app
   ARG SDKMS_APP_ID=$SDKMS_APP_ID
   ARG SDKMS_API_ENDPOINT=$SDKMS_API_ENDPOINT
@@ -16,4 +16,19 @@ db-tde:
   ARG SDKMS_ACCT_ID=$SDKMS_ACCT_ID
   COPY scripts /app
   RUN --no-cache ./gen_cert.sh
-  RUN --interactive /usr/bin/mongod --enableEncryption --kmipServerName $SDKMS_API_ENDPOINT --kmipServerCAFile /app/DSM_Chain_CA.pem --kmipClientCertificateFile /app/client.pem
+  CMD ["/usr/bin/mongod","--enableEncryption","--kmipServerName","$SDKMS_API_ENDPOINT","--kmipServerCAFile","/app/DSM_Chain_CA.pem","--kmipClientCertificateFile","/app/client.pem"]
+
+run-bash:
+  WITH DOCKER --load mongodb-$MONGO_VERSION-bash:latest=+bash
+    RUN docker run --rm -d --name mongodb-$MONGO_VERSION-bash mongodb-$MONGO_VERSION-bash:latest
+  END
+
+run-db:
+  WITH DOCKER --load mongodb-$MONGO_VERSION-db:latest=+db
+    RUN docker run --rm -d --name mongodb-$MONGO_VERSION-db mongodb-$MONGO_VERSION-db:latest
+  END
+
+run-tde:
+  WITH DOCKER --load mongodb-$MONGO_VERSION-tde:latest=+tde
+    RUN docker run --rm -d --name mongodb-$MONGO_VERSION-tde mongodb-$MONGO_VERSION-tde:latest
+  END
