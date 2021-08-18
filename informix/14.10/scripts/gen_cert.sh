@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generate the certs
-openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out client.crt -keyout client.key -subj "/CN=${SDKMS_APP_ID}"
+openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out client.crt -keyout client.key -subj "/CN=${SDKMS_INFORMIX_APP_ID}"
 cat client.crt | sed '1,1d' | sed '$ d' > client.crt.nohead
 cat client.crt client.key > client.pem
 CERT_INFO=`cat client.crt.nohead | tr -d '[:space:]'`
