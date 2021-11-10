@@ -20,3 +20,4 @@ db:
   RUN --no-cache chmod -R 755 /opt/oracle
   RUN --no-cache chown -R oracle:oinstall /opt/oracle
   SAVE IMAGE oracle-db:$ORACLE_VERSION
+  USER oracle
