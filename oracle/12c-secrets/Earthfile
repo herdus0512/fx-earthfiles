@@ -8,13 +8,13 @@ bash:
 
 db:
   WORKDIR /app
-  RUN --no-cache mkdir -p /etc/fortanix
-  COPY scripts/pkcs11.conf /etc/fortanix/
-  RUN --no-cache wget https://s3.us-west-1.amazonaws.com/downloads.fortanix.com/4.2.1500/fortanix_pkcs11_4.2.1500.so
-  RUN --no-cache mkdir -p /opt/oracle/extapi/64/hsm/fortanix/4.2.1500
-  RUN --no-cache cp /app/fortanix_pkcs11_4.2.1500.so /opt/oracle/extapi/64/hsm/fortanix/4.2.1500/libpkcs11.so
-  RUN --no-cache chmod -R 755 /opt/oracle
-  RUN --no-cache chown -R oracle:oinstall /opt/oracle
+  RUN --no-cache sudo mkdir -p /etc/fortanix
+  COPY --chown=root:root scripts/pkcs11.conf /etc/fortanix/
+  RUN --no-cache sudo wget https://s3.us-west-1.amazonaws.com/downloads.fortanix.com/4.2.1500/fortanix_pkcs11_4.2.1500.so
+  RUN --no-cache sudo mkdir -p /opt/oracle/extapi/64/hsm/fortanix/4.2.1500
+  RUN --no-cache sudo cp /app/fortanix_pkcs11_4.2.1500.so /opt/oracle/extapi/64/hsm/fortanix/4.2.1500/libpkcs11.so
+  RUN --no-cache sudo chmod -R 755 /opt/oracle
+  RUN --no-cache sudo chown -R oracle:oinstall /opt/oracle
   SAVE IMAGE oracle-db:$ORACLE_VERSION
 
 tde:
