@@ -7,6 +7,7 @@ bash:
   SAVE IMAGE oracle-bash:$ORACLE_VERSION
 
 db:
+  USER root
   WORKDIR /app
   RUN --no-cache sudo mkdir -p /etc/fortanix
   COPY --chown=root:root scripts/pkcs11.conf /etc/fortanix/
