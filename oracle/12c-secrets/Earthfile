@@ -13,7 +13,7 @@ db:
   COPY scripts /app
   RUN --no-cache mkdir -p /etc/fortanix
   RUN --no-cache chown oracle:oinstall /etc/fortanix
-  RUN --no-cache chmode -R 755 /etc/fortanix
+  RUN --no-cache chmod -R 755 /etc/fortanix
   COPY scripts /app
   RUN --no-cache ./gen_conf.sh
   RUN --no-cache wget https://s3.us-west-1.amazonaws.com/downloads.fortanix.com/4.2.1500/fortanix_pkcs11_4.2.1500.so
