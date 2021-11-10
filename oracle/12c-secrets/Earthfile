@@ -22,8 +22,6 @@ db:
   RUN --no-cache chmod -R 755 /opt/oracle
   RUN --no-cache chown -R oracle:dba /opt/oracle
 
-  RUN --no-cache cp /app/inject_api_key.sh /docker-entrypoint-initdb.d/
-
   USER oracle
   WORKDIR /home/oracle
 
